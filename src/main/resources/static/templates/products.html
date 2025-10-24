@@ -1,0 +1,784 @@
+<!-- Products Template - Demonstrates Advanced Angular.js UI Features -->
+<div class="container-fluid">
+    <!-- Header Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="mb-3">
+                <i class="fas fa-box me-2"></i>
+                Product Catalog
+                <span ng-if="filters.category" class="badge bg-primary ms-2">
+                    <i class="fas fa-tag me-1"></i>
+                    {{filters.category}}
+                </span>
+            </h2>
+            
+            <!-- Advanced Search and Filters -->
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <!-- Search Bar -->
+                        <div class="col-md-4">
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="fas fa-search"></i>
+                                </span>
+                                <input type="text" 
+                                       class="form-control" 
+                                       ng-model="filters.searchTerm"
+                                       ng-change="onSearchChange()"
+                                       placeholder="Search products...">
+                            </div>
+                        </div>
+                        
+                        <!-- Category Filter -->
+                        <div class="col-md-3">
+                            <select class="form-select" 
+                                    ng-model="filters.category"
+                                    ng-change="onFilterChange()">
+                                <option value="">All Categories</option>
+                                <option ng-repeat="category in categories" 
+                                        value="{{category}}">
+                                    {{category}}
+                                </option>
+                            </select>
+                        </div>
+                        
+                        <!-- Price Range Filter -->
+                        <div class="col-md-3">
+                            <div class="row">
+                                <div class="col-6">
+                                    <input type="number" 
+                                           class="form-control" 
+                                           ng-model="filters.priceRange.min"
+                                           ng-change="onFilterChange()"
+                                           placeholder="Min Price">
+                                </div>
+                                <div class="col-6">
+                                    <input type="number" 
+                                           class="form-control" 
+                                           ng-model="filters.priceRange.max"
+                                           ng-change="onFilterChange()"
+                                           placeholder="Max Price">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Stock Filter -->
+                        <div class="col-md-1">
+                            <div class="form-check">
+                                <input class="form-check-input" 
+                                       type="checkbox" 
+                                       ng-model="filters.inStock"
+                                       ng-change="onFilterChange()">
+                                <label class="form-check-label">
+                                    In Stock Only
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <!-- Clear Filter Button -->
+                        <div class="col-md-1">
+                            <button type="button" 
+                                    class="btn btn-outline-secondary w-100"
+                                    ng-click="clearFilters()"
+                                    title="Clear all filters">
+                                <i class="fas fa-times me-1"></i>
+                                Clear
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Dynamic Product Detail View -->
+    <div ng-if="showProductDetail && selectedProduct" class="product-detail-view">
+        <!-- Back Button -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <button type="button" 
+                        class="btn btn-outline-secondary"
+                        ng-click="backToGrid()">
+                    <i class="fas fa-arrow-left me-2"></i>
+                    Back to Products
+                </button>
+            </div>
+        </div>
+        
+        <!-- Product Detail Content -->
+        <div class="row">
+            <!-- Product Images -->
+            <div class="col-md-6">
+                <div class="product-image-container">
+                    <img ng-src="{{selectedProduct.imageUrl || '/images/products/placeholder.svg'}}" 
+                         class="img-fluid rounded shadow"
+                         alt="{{selectedProduct.name}}"
+                         style="width: 100%; height: 400px; object-fit: cover;"
+                         onerror="this.src='/images/products/placeholder.svg'">
+                    
+                    <!-- Image Gallery (placeholder for future enhancement) -->
+                    <div class="row mt-3">
+                        <div class="col-3">
+                            <img ng-src="{{selectedProduct.imageUrl || '/images/products/placeholder.svg'}}" 
+                                 class="img-fluid rounded"
+                                 style="height: 80px; object-fit: cover;"
+                                 onerror="this.src='/images/products/placeholder.svg'">
+                        </div>
+                        <div class="col-3">
+                            <img ng-src="{{selectedProduct.imageUrl || '/images/products/placeholder.svg'}}" 
+                                 class="img-fluid rounded"
+                                 style="height: 80px; object-fit: cover;"
+                                 onerror="this.src='/images/products/placeholder.svg'">
+                        </div>
+                        <div class="col-3">
+                            <img ng-src="{{selectedProduct.imageUrl || '/images/products/placeholder.svg'}}" 
+                                 class="img-fluid rounded"
+                                 style="height: 80px; object-fit: cover;"
+                                 onerror="this.src='/images/products/placeholder.svg'">
+                        </div>
+                        <div class="col-3">
+                            <img ng-src="{{selectedProduct.imageUrl || '/images/products/placeholder.svg'}}" 
+                                 class="img-fluid rounded"
+                                 style="height: 80px; object-fit: cover;"
+                                 onerror="this.src='/images/products/placeholder.svg'">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Product Information -->
+            <div class="col-md-6">
+                <div class="product-info">
+                    <!-- Product Title -->
+                    <h1 class="product-title mb-3">{{selectedProduct.name}}</h1>
+                    
+                    <!-- Category Badge -->
+                    <span class="badge bg-primary mb-3">{{selectedProduct.category}}</span>
+                    
+                    <!-- Price -->
+                    <div class="price-section mb-4">
+                        <h2 class="text-primary mb-0">${{selectedProduct.price | number:2}}</h2>
+                        <small class="text-muted">Free shipping on orders over $50</small>
+                    </div>
+                    
+                    <!-- Stock Status - SINGLE BADGE ONLY -->
+                    <div class="stock-status mb-4">
+                        <div class="badge fs-6" 
+                             ng-class="{
+                                 'bg-danger': selectedProduct.stockQuantity === 0,
+                                 'bg-warning': selectedProduct.stockQuantity > 0 && selectedProduct.stockQuantity < 10,
+                                 'bg-success': selectedProduct.stockQuantity >= 10
+                             }"
+                             role="status"
+                             ng-attr-aria-label="Product stock status">
+                            <span ng-if="selectedProduct.stockQuantity === 0">Out of Stock</span>
+                            <span ng-else-if="selectedProduct.stockQuantity < 10">Only {{selectedProduct.stockQuantity}} left in stock</span>
+                            <span ng-else>{{selectedProduct.stockQuantity}} in stock</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Description -->
+                    <div class="description mb-4">
+                        <h5>Description</h5>
+                        <p class="text-muted">{{selectedProduct.description}}</p>
+                    </div>
+                    
+                    <!-- Quantity Selector -->
+                    <div class="quantity-selector mb-4">
+                        <label class="form-label">Quantity:</label>
+                        <div class="input-group" style="width: 150px;">
+                            <button class="btn btn-outline-secondary" 
+                                    ng-click="selectedQuantity = Math.max(1, selectedQuantity - 1)">-</button>
+                            <input type="number" 
+                                   class="form-control text-center" 
+                                   ng-model="selectedQuantity"
+                                   min="1"
+                                   max="{{selectedProduct.stockQuantity}}">
+                            <button class="btn btn-outline-secondary" 
+                                    ng-click="selectedQuantity = Math.min(selectedProduct.stockQuantity, selectedQuantity + 1)">+</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="action-buttons">
+                        <button class="btn btn-primary btn-lg me-3" 
+                                ng-click="addToCart(selectedProduct, selectedQuantity)"
+                                ng-disabled="selectedProduct.stockQuantity === 0">
+                            <i class="fas fa-cart-plus me-2"></i>
+                            Add to Cart
+                        </button>
+                        <button class="btn btn-outline-primary btn-lg">
+                            <i class="fas fa-heart me-2"></i>
+                            Add to Wishlist
+                        </button>
+                    </div>
+                    
+                    <!-- Product Features -->
+                    <div class="product-features mt-5">
+                        <h5>Product Features</h5>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-check text-success me-2"></i>High Quality Materials</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Free Shipping</li>
+                            <li><i class="fas fa-check text-success me-2"></i>30-Day Return Policy</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Customer Support</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Related Products -->
+        <div class="row mt-5" ng-if="getRelatedProducts().length > 0">
+            <div class="col-12">
+                <h4 class="mb-4">Related Products</h4>
+                <div class="row">
+                    <div class="col-lg-3 col-md-6 mb-4" 
+                         ng-repeat="relatedProduct in getRelatedProducts() track by relatedProduct.id">
+                        <div class="card h-100 product-card" 
+                             ng-click="showProductDetailView(relatedProduct)"
+                             style="cursor: pointer;">
+                            <img ng-src="{{relatedProduct.imageUrl || '/images/products/placeholder.svg'}}" 
+                                 class="card-img-top" 
+                                 alt="{{relatedProduct.name}}"
+                                 style="height: 200px; object-fit: cover;"
+                                 onerror="this.src='/images/products/placeholder.svg'">
+                            <div class="card-body">
+                                <h6 class="card-title">{{relatedProduct.name}}</h6>
+                                <p class="card-text text-primary">${{relatedProduct.price | number:2}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Section -->
+    <div class="row" ng-if="!showProductDetail">
+        <!-- Sidebar Filters -->
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Filters</h5>
+                    <button type="button" 
+                            class="btn btn-sm btn-outline-secondary"
+                            ng-click="clearFilters()"
+                            title="Clear all filters">
+                        <i class="fas fa-times me-1"></i>
+                        Clear All
+                    </button>
+                </div>
+                <div class="card-body">
+                    <!-- Categories -->
+                    <div class="mb-3">
+                        <h6>Categories</h6>
+                        <div class="list-group list-group-flush">
+                            <!-- All Categories Option -->
+                            <a href="javascript:void(0)" 
+                               class="list-group-item list-group-item-action"
+                               ng-class="{'active': !filters.category}"
+                               ng-click="selectCategory(''); $event.preventDefault()">
+                                <i class="fas fa-th-large me-2"></i>
+                                All Categories
+                                <span class="badge bg-secondary rounded-pill float-end">
+                                    {{products.length}}
+                                </span>
+                            </a>
+                            
+                            <!-- Individual Categories -->
+                            <a href="javascript:void(0)" 
+                               class="list-group-item list-group-item-action"
+                               ng-repeat="category in categories"
+                               ng-class="{'active': filters.category === category}"
+                               ng-click="selectCategory(category); $event.preventDefault()"
+                               title="Click to filter by {{category}}">
+                                <i class="fas fa-tag me-2"></i>
+                                {{category}}
+                                <span class="badge bg-primary rounded-pill float-end">
+                                    {{getCategoryCount(category)}}
+                                </span>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- Price Range Slider -->
+                    <div class="mb-3">
+                        <h6>Price Range</h6>
+                        <div class="price-range-slider">
+                            <input type="range" 
+                                   class="form-range" 
+                                   min="0" 
+                                   max="1000" 
+                                   ng-model="filters.priceRange.max"
+                                   ng-change="onFilterChange()">
+                            <input type="range" 
+                                   class="form-range" 
+                                   min="0" 
+                                   max="1000" 
+                                   ng-model="filters.priceRange.min"
+                                   ng-change="onFilterChange()">
+                            <div class="d-flex justify-content-between">
+                                <span>${{filters.priceRange.min}}</span>
+                                <span>${{filters.priceRange.max}}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Stock Status -->
+                    <div class="mb-3">
+                        <h6>Availability</h6>
+                        <div class="form-check">
+                            <input class="form-check-input" 
+                                   type="checkbox" 
+                                   ng-model="filters.inStock"
+                                   ng-change="onFilterChange()">
+                            <label class="form-check-label">
+                                In Stock Only
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Products Grid -->
+        <div class="col-md-9">
+            <!-- Results Summary -->
+            <div class="alert alert-info mb-3" ng-if="filteredProducts.length > 0">
+                <i class="fas fa-info-circle me-2"></i>
+                Showing {{filteredProducts.length}} of {{products.length}} products
+                <span ng-if="filters.category"> in "{{filters.category}}" category</span>
+            </div>
+            
+            
+            <!-- Sort and View Options -->
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <div class="btn-group" role="group">
+                        <button type="button" 
+                                class="btn btn-outline-primary"
+                                ng-click="sort('name')"
+                                ng-class="{'active': sortBy === 'name'}">
+                            <i class="fas fa-sort-alpha-down me-1"></i>
+                            Name
+                        </button>
+                        <button type="button" 
+                                class="btn btn-outline-primary"
+                                ng-click="sort('price')"
+                                ng-class="{'active': sortBy === 'price'}">
+                            <i class="fas fa-sort-numeric-down me-1"></i>
+                            Price
+                        </button>
+                        <button type="button" 
+                                class="btn btn-outline-primary"
+                                ng-click="sort('createdAt')"
+                                ng-class="{'active': sortBy === 'createdAt'}">
+                            <i class="fas fa-sort me-1"></i>
+                            Newest
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 text-end">
+                    <div class="btn-group" role="group">
+                        <button type="button" 
+                                class="btn btn-outline-secondary"
+                                ng-click="itemsPerPage = 12"
+                                ng-class="{'active': itemsPerPage === 12}">
+                            12
+                        </button>
+                        <button type="button" 
+                                class="btn btn-outline-secondary"
+                                ng-click="itemsPerPage = 24"
+                                ng-class="{'active': itemsPerPage === 24}">
+                            24
+                        </button>
+                        <button type="button" 
+                                class="btn btn-outline-secondary"
+                                ng-click="itemsPerPage = 48"
+                                ng-class="{'active': itemsPerPage === 48}">
+                            48
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Loading Spinner -->
+            <div ng-show="loading" class="text-center py-5">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+            
+            
+            <!-- Products Grid -->
+            <div class="products-grid" ng-hide="loading">
+                <!-- Category Filter Status -->
+                <div ng-if="filters.category" class="alert alert-info mb-3">
+                    <i class="fas fa-filter me-2"></i>
+                    Showing products in category: <strong>{{filters.category}}</strong>
+                    <button type="button" class="btn btn-sm btn-outline-secondary ms-2" ng-click="selectCategory('')">
+                        <i class="fas fa-times me-1"></i>Clear Filter
+                    </button>
+                </div>
+                
+                <!-- Filtering Animation -->
+                <div ng-if="filtering" class="text-center py-4">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Filtering products...</span>
+                    </div>
+                    <p class="mt-2 text-muted">Filtering products...</p>
+                </div>
+                
+                <!-- Products Grid Row -->
+                <div class="row">
+                    <div class="col-lg-4 col-md-6 mb-4" 
+                         ng-repeat="product in filteredProducts track by product.id">
+                        <div class="card h-100 product-card" 
+                             ng-class="{'out-of-stock': product.stockQuantity === 0}"
+                             ng-click="showProductDetailView(product)"
+                             style="cursor: pointer;">
+                            
+                            <!-- Product Image -->
+                            <div class="position-relative product-image-container">
+                                <img ng-src="{{product.imageUrl || '/images/products/placeholder.svg'}}" 
+                                     class="card-img-top" 
+                                     alt="{{product.name}}"
+                                     style="height: 200px; object-fit: cover;"
+                                     onerror="this.src='/images/products/placeholder.svg'">
+                                
+                                <!-- Stock Badge - SINGLE BADGE ONLY -->
+                                <div class="position-absolute top-0 start-0 m-2 stock-badge">
+                                    <div class="badge" 
+                                         ng-class="{
+                                             'bg-danger': product.stockQuantity === 0,
+                                             'bg-warning': product.stockQuantity > 0 && product.stockQuantity < 10,
+                                             'bg-success': product.stockQuantity >= 10
+                                         }"
+                                         role="status"
+                                         ng-attr-aria-label="Product stock status">
+                                        <span ng-if="product.stockQuantity === 0">Out of Stock</span>
+                                        <span ng-else-if="product.stockQuantity < 10">Low Stock</span>
+                                        <span ng-else>In Stock</span>
+                                    </div>
+                                </div>
+                                
+                                
+                                <!-- Click to View Detail Overlay -->
+                                <div class="position-absolute bottom-0 start-0 end-0 p-2 bg-dark bg-opacity-90 text-white text-center click-overlay">
+                                    <small><i class="fas fa-mouse-pointer me-1"></i>Click to view details</small>
+                                </div>
+                                
+                                <!-- Hover Overlay -->
+                                <div class="position-absolute top-0 start-0 end-0 bottom-0 bg-primary bg-opacity-10 d-flex align-items-center justify-content-center hover-overlay">
+                                    <div class="text-center text-primary">
+                                        <i class="fas fa-search fa-2x mb-2"></i>
+                                        <div class="fw-bold">View Details</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Product Info -->
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title">{{product.name}}</h5>
+                                <p class="card-text text-muted">{{product.description | limitTo: 100}}</p>
+                                
+                                <div class="mt-auto">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span class="h5 text-primary">${{product.price | number:2}}</span>
+                                        <small class="text-muted">Stock: {{product.stockQuantity}}</small>
+                                    </div>
+                                    
+                                    <!-- Add to Cart Button -->
+                                    <button class="btn btn-primary w-100" 
+                                            ng-click="addToCart(product)"
+                                            ng-disabled="product.stockQuantity === 0">
+                                        <i class="fas fa-cart-plus me-1"></i>
+                                        Add to Cart
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- No Products Message -->
+            <div ng-if="filteredProducts.length === 0 && !loading && !filtering" class="text-center py-5">
+                <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                <h4 class="text-muted">No products found</h4>
+                <p class="text-muted" ng-if="filters.category">
+                    No products found in the "{{filters.category}}" category
+                </p>
+                <p class="text-muted" ng-if="!filters.category">
+                    Try adjusting your search criteria
+                </p>
+                <div class="mt-4">
+                    <button type="button" 
+                            class="btn btn-outline-primary me-2"
+                            ng-click="clearFilters()">
+                        <i class="fas fa-times me-2"></i>
+                        Clear Filters
+                    </button>
+                    <button type="button" 
+                            class="btn btn-primary"
+                            ng-click="selectCategory('')">
+                        <i class="fas fa-th-large me-2"></i>
+                        Show All Categories
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Pagination -->
+            <nav ng-if="totalItems > itemsPerPage" aria-label="Products pagination">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item" ng-class="{'disabled': currentPage === 1}">
+                        <a class="page-link" href="#" ng-click="setPage(currentPage - 1)">Previous</a>
+                    </li>
+                    
+                    <li class="page-item" 
+                        ng-repeat="page in getPageNumbers()"
+                        ng-class="{'active': page === currentPage}">
+                        <a class="page-link" href="#" ng-click="setPage(page)">{{page}}</a>
+                    </li>
+                    
+                    <li class="page-item" ng-class="{'disabled': currentPage === Math.ceil(totalItems / itemsPerPage)}">
+                        <a class="page-link" href="#" ng-click="setPage(currentPage + 1)">Next</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+<!-- Quick View Modal -->
+<div class="modal fade" id="quickViewModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">{{selectedProduct.name}}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <img ng-src="{{selectedProduct.imageUrl || '/images/products/placeholder.svg'}}" 
+                             class="img-fluid" 
+                             alt="{{selectedProduct.name}}"
+                             onerror="this.src='/images/products/placeholder.svg'">
+                    </div>
+                    <div class="col-md-6">
+                        <h4 class="text-primary">${{selectedProduct.price | number:2}}</h4>
+                        <p class="text-muted">{{selectedProduct.description}}</p>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Quantity:</label>
+                            <div class="input-group" style="width: 120px;">
+                                <button class="btn btn-outline-secondary" 
+                                        ng-click="selectedQuantity = Math.max(1, selectedQuantity - 1)">-</button>
+                                <input type="number" 
+                                       class="form-control text-center" 
+                                       ng-model="selectedQuantity"
+                                       min="1"
+                                       max="{{selectedProduct.stockQuantity}}">
+                                <button class="btn btn-outline-secondary" 
+                                        ng-click="selectedQuantity = Math.min(selectedProduct.stockQuantity, selectedQuantity + 1)">+</button>
+                            </div>
+                        </div>
+                        
+                        <button class="btn btn-primary w-100" 
+                                ng-click="addToCart(selectedProduct, selectedQuantity)">
+                            <i class="fas fa-cart-plus me-1"></i>
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add to Cart Animation -->
+<style>
+.add-to-cart-animation {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 50px;
+    font-weight: bold;
+    z-index: 9999;
+    animation: addToCartAnimation 1s ease-out forwards;
+}
+
+@keyframes addToCartAnimation {
+    0% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(1.5);
+    }
+}
+
+.product-card {
+    transition: all 0.3s ease-in-out;
+    border: 2px solid transparent;
+    overflow: hidden;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    border-color: #007bff;
+}
+
+.out-of-stock {
+    opacity: 0.6;
+}
+
+/* Product Image Container */
+.product-image-container {
+    overflow: hidden;
+    position: relative;
+}
+
+/* Stock Badge */
+.stock-badge {
+    z-index: 10;
+    pointer-events: none;
+}
+
+.stock-badge .badge {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+
+/* Click Overlay */
+.click-overlay {
+    z-index: 5;
+    font-size: 0.8rem;
+    backdrop-filter: blur(2px);
+    border-top: 1px solid rgba(255,255,255,0.2);
+}
+
+/* Hover Overlay */
+.hover-overlay {
+    z-index: 1;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.product-card:hover .hover-overlay {
+    opacity: 1;
+}
+
+.product-card:hover .click-overlay {
+    opacity: 0.7;
+}
+
+/* Ensure proper layering */
+.product-image-container img {
+    z-index: 1;
+}
+
+.stock-badge {
+    z-index: 10;
+}
+
+.quick-view-btn {
+    z-index: 10;
+}
+
+.click-overlay {
+    z-index: 5;
+}
+
+.hover-overlay {
+    z-index: 2;
+}
+
+/* Dynamic Product Detail View Styles */
+.product-detail-view {
+    animation: fadeInUp 0.5s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.product-title {
+    color: #333;
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+.price-section h2 {
+    font-weight: 700;
+    font-size: 2.5rem;
+}
+
+.stock-status .badge {
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+}
+
+.action-buttons .btn {
+    min-width: 150px;
+    font-weight: 600;
+}
+
+.product-features li {
+    padding: 0.5rem 0;
+    font-size: 1.1rem;
+}
+
+.product-image-container img {
+    transition: transform 0.3s ease;
+}
+
+.product-image-container img:hover {
+    transform: scale(1.05);
+}
+
+/* Related Products */
+.related-products .product-card {
+    transition: all 0.3s ease;
+}
+
+.related-products .product-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .product-detail-view .col-md-6 {
+        margin-bottom: 2rem;
+    }
+    
+    .action-buttons .btn {
+        width: 100%;
+        margin-bottom: 1rem;
+    }
+    
+    .price-section h2 {
+        font-size: 2rem;
+    }
+}
+</style>

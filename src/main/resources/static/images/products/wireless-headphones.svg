@@ -1,0 +1,15 @@
+<svg width="300" height="200" xmlns="http://www.w3.org/2000/svg">
+  <rect width="300" height="200" fill="#f8f9fa"/>
+  <ellipse cx="100" cy="100" rx="60" ry="40" fill="#2c3e50"/>
+  <ellipse cx="100" cy="95" rx="50" ry="35" fill="#34495e"/>
+  <ellipse cx="100" cy="90" rx="40" ry="30" fill="#3498db"/>
+  <rect x="80" y="85" width="40" height="10" fill="#2980b9" rx="5"/>
+  <ellipse cx="200" cy="100" rx="60" ry="40" fill="#2c3e50"/>
+  <ellipse cx="200" cy="95" rx="50" ry="35" fill="#34495e"/>
+  <ellipse cx="200" cy="90" rx="40" ry="30" fill="#3498db"/>
+  <rect x="180" y="85" width="40" height="10" fill="#2980b9" rx="5"/>
+  <rect x="140" y="95" width="20" height="5" fill="#2c3e50" rx="2"/>
+  <text x="150" y="50" font-family="Arial, sans-serif" font-size="12" fill="#2c3e50" text-anchor="middle">Wireless Headphones</text>
+  <text x="150" y="65" font-family="Arial, sans-serif" font-size="10" fill="#7f8c8d" text-anchor="middle">Noise-canceling</text>
+  <text x="150" y="80" font-family="Arial, sans-serif" font-size="8" fill="#95a5a6" text-anchor="middle">$299.99</text>
+</svg>

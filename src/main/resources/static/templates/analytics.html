@@ -1,0 +1,386 @@
+<!-- Analytics Template - Demonstrates Advanced Angular.js Data Visualization -->
+<div class="container-fluid">
+    <!-- Header Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2 class="mb-0">
+                    <i class="fas fa-chart-line me-2"></i>
+                    Analytics Dashboard
+                </h2>
+                
+                <!-- Real-time Status -->
+                <div class="d-flex align-items-center">
+                    <div class="me-3">
+                        <span class="badge bg-success me-1">
+                            <i class="fas fa-circle"></i>
+                        </span>
+                        <span class="text-muted">Live Data</span>
+                    </div>
+                    
+                    <!-- Auto-refresh Toggle -->
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" 
+                               type="checkbox" 
+                               ng-model="autoRefresh"
+                               ng-change="toggleAutoRefresh()">
+                        <label class="form-check-label">
+                            Auto Refresh
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Filters Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <!-- Date Range Filter -->
+                        <div class="col-md-3">
+                            <label class="form-label">Date Range</label>
+                            <div class="input-group">
+                                <input type="date" 
+                                       class="form-control" 
+                                       ng-model="filters.dateRange.start"
+                                       ng-change="onFilterChange()">
+                                <span class="input-group-text">to</span>
+                                <input type="date" 
+                                       class="form-control" 
+                                       ng-model="filters.dateRange.end"
+                                       ng-change="onFilterChange()">
+                            </div>
+                        </div>
+                        
+                        <!-- Category Filter -->
+                        <div class="col-md-2">
+                            <label class="form-label">Category</label>
+                            <select class="form-select" 
+                                    ng-model="filters.category"
+                                    ng-change="onFilterChange()">
+                                <option value="">All Categories</option>
+                                <option value="electronics">Electronics</option>
+                                <option value="clothing">Clothing</option>
+                                <option value="books">Books</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Product Filter -->
+                        <div class="col-md-2">
+                            <label class="form-label">Product</label>
+                            <select class="form-select" 
+                                    ng-model="filters.product"
+                                    ng-change="onFilterChange()">
+                                <option value="">All Products</option>
+                                <option value="laptop">Laptop</option>
+                                <option value="phone">Phone</option>
+                                <option value="tablet">Tablet</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Export Buttons -->
+                        <div class="col-md-2">
+                            <label class="form-label">Export</label>
+                            <div class="btn-group w-100">
+                                <button class="btn btn-outline-primary" 
+                                        ng-click="exportData('csv')">
+                                    <i class="fas fa-file-csv me-1"></i>
+                                    CSV
+                                </button>
+                                <button class="btn btn-outline-primary" 
+                                        ng-click="exportData('pdf')">
+                                    <i class="fas fa-file-pdf me-1"></i>
+                                    PDF
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Refresh Button -->
+                        <div class="col-md-2">
+                            <label class="form-label">&nbsp;</label>
+                            <button class="btn btn-primary w-100" 
+                                    ng-click="loadAnalytics()"
+                                    ng-disabled="loading">
+                                <i class="fas fa-sync-alt me-1" ng-class="{'fa-spin': loading}"></i>
+                                Refresh
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Key Metrics Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="card-title">Total Revenue</h6>
+                            <h3 class="mb-0">${{analytics.revenue | number:2}}</h3>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-dollar-sign fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="card-title">Total Orders</h6>
+                            <h3 class="mb-0">{{analytics.orders | number}}</h3>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-shopping-cart fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="card-title">Conversion Rate</h6>
+                            <h3 class="mb-0">{{analytics.conversionRate | number:1}}%</h3>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-percentage fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card bg-warning text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h6 class="card-title">Active Users</h6>
+                            <h3 class="mb-0">{{realTimeData.activeUsers | number}}</h3>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-users fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Charts Section -->
+    <div class="row mb-4">
+        <!-- Sales Chart -->
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Sales Over Time</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="salesChart" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Revenue Distribution -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Revenue Distribution</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="revenueChart" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Product Performance and Customer Growth -->
+    <div class="row mb-4">
+        <!-- Product Performance -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Top Performing Products</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="productChart" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Customer Growth -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Customer Growth</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="customerChart" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Real-time Data Section -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-bolt me-1"></i>
+                        Real-time Activity
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="text-center">
+                                <h4 class="text-primary">{{realTimeData.currentSales | number}}</h4>
+                                <small class="text-muted">Sales Today</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="text-center">
+                                <h4 class="text-success">{{realTimeData.activeUsers | number}}</h4>
+                                <small class="text-muted">Active Users</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-fire me-1"></i>
+                        Top Products Today
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div ng-repeat="product in realTimeData.topProducts" class="d-flex justify-content-between align-items-center mb-2">
+                        <div>
+                            <strong>{{product.name}}</strong>
+                            <br>
+                            <small class="text-muted">{{product.category}}</small>
+                        </div>
+                        <div class="text-end">
+                            <span class="badge bg-primary">{{product.sales}} sales</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Recent Orders -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-clock me-1"></i>
+                        Recent Orders
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Customer</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Time</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="order in realTimeData.recentOrders">
+                                    <td>{{order.id}}</td>
+                                    <td>{{order.customer}}</td>
+                                    <td>${{order.amount | number:2}}</td>
+                                    <td>
+                                        <span class="badge" ng-class="{
+                                            'bg-success': order.status === 'completed',
+                                            'bg-warning': order.status === 'pending',
+                                            'bg-danger': order.status === 'cancelled'
+                                        }">
+                                            {{order.status}}
+                                        </span>
+                                    </td>
+                                    <td>{{order.time | date:'short'}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Loading Overlay -->
+<div ng-show="loading" class="loading-overlay">
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>
+
+<!-- Custom Styles -->
+<style>
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.card {
+    transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.badge {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.table tbody tr {
+    transition: background-color 0.2s ease-in-out;
+}
+
+.table tbody tr:hover {
+    background-color: rgba(0, 123, 255, 0.1);
+}
+</style>

@@ -1,0 +1,11 @@
+<svg width="300" height="200" xmlns="http://www.w3.org/2000/svg">
+  <rect width="300" height="200" fill="#f8f9fa"/>
+  <ellipse cx="120" cy="120" rx="80" ry="40" fill="#dc3545"/>
+  <ellipse cx="120" cy="110" rx="70" ry="35" fill="#e74c3c"/>
+  <ellipse cx="100" cy="100" rx="20" ry="15" fill="#c0392b"/>
+  <ellipse cx="140" cy="100" rx="20" ry="15" fill="#c0392b"/>
+  <rect x="80" y="130" width="80" height="20" fill="#2c3e50" rx="10"/>
+  <text x="150" y="50" font-family="Arial, sans-serif" font-size="12" fill="#2c3e50" text-anchor="middle">Running Shoes</text>
+  <text x="150" y="65" font-family="Arial, sans-serif" font-size="10" fill="#7f8c8d" text-anchor="middle">Comfortable for athletes</text>
+  <text x="150" y="80" font-family="Arial, sans-serif" font-size="8" fill="#95a5a6" text-anchor="middle">$129.99</text>
+</svg>

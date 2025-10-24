@@ -1,0 +1,9 @@
+<svg width="300" height="200" xmlns="http://www.w3.org/2000/svg">
+  <rect width="300" height="200" fill="#f8f9fa"/>
+  <rect x="20" y="40" width="260" height="120" fill="#343a40" rx="5"/>
+  <rect x="30" y="50" width="240" height="100" fill="#495057" rx="3"/>
+  <rect x="40" y="60" width="220" height="80" fill="#6c757d" rx="2"/>
+  <text x="150" y="100" font-family="Arial, sans-serif" font-size="14" fill="#ffffff" text-anchor="middle">Laptop Pro</text>
+  <text x="150" y="120" font-family="Arial, sans-serif" font-size="12" fill="#dee2e6" text-anchor="middle">High-performance laptop</text>
+  <text x="150" y="140" font-family="Arial, sans-serif" font-size="10" fill="#adb5bd" text-anchor="middle">$1299.99</text>
+</svg>

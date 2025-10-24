@@ -1,0 +1,13 @@
+<svg width="300" height="200" xmlns="http://www.w3.org/2000/svg">
+  <rect width="300" height="200" fill="#f8f9fa"/>
+  <path d="M120 40 L180 40 L190 60 L200 80 L200 160 L180 180 L120 180 L100 160 L100 80 L110 60 Z" fill="#e74c3c"/>
+  <path d="M125 45 L175 45 L185 65 L195 85 L195 155 L175 175 L125 175 L105 155 L105 85 L115 65 Z" fill="#c0392b"/>
+  <rect x="140" y="50" width="20" height="30" fill="#34495e"/>
+  <rect x="145" y="55" width="10" height="20" fill="#2c3e50"/>
+  <rect x="150" y="60" width="5" height="10" fill="#ecf0f1"/>
+  <rect x="120" y="100" width="60" height="40" fill="#34495e"/>
+  <rect x="125" y="105" width="50" height="30" fill="#2c3e50"/>
+  <text x="150" y="30" font-family="Arial, sans-serif" font-size="12" fill="#2c3e50" text-anchor="middle">Winter Jacket</text>
+  <text x="150" y="45" font-family="Arial, sans-serif" font-size="10" fill="#7f8c8d" text-anchor="middle">Warm & Stylish</text>
+  <text x="150" y="60" font-family="Arial, sans-serif" font-size="8" fill="#95a5a6" text-anchor="middle">$199.99</text>
+</svg>
